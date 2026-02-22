@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        PARENT POM: This is key to understanding Spring Boot.
+        By inheriting from spring-boot-starter-parent, we get:
+        - Pre-configured dependency versions (no version conflicts)
+        - Sensible plugin defaults
+        - Java version configuration
+        You almost NEVER specify versions for Spring libraries manually.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.3</version>
+        <relativePath/>
+    </parent>
+
+    <!--
+        PROJECT COORDINATES: Maven identifies every project by these 3 values.
+        groupId = your organization (reversed domain name convention)
+        artifactId = your project name
+        version = SNAPSHOT means "in development"
+    -->
+    <groupId>com.taskmanager</groupId>
+    <artifactId>task-manager-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Task Manager API</name>
+    <description>A production-grade task management REST API built with Spring Boot</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <jjwt.version>0.12.5</jjwt.version>
+    </properties>
+
+    <dependencies>
+        <!--
+            SPRING WEB: Brings in Spring MVC, embedded Tomcat server,
+            and Jackson (JSON serialization). This single dependency gives
+            you everything needed to build REST APIs.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--
+            SPRING DATA JPA: This is how Java talks to databases.
+            Brings in Hibernate (ORM that maps Java objects to tables),
+            Spring Data (generates repository implementations from interfaces),
+            and HikariCP (connection pool).
+
+            Coming from another language: think of this as your ORM layer.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!--
+            VALIDATION: Lets you annotate fields with @NotBlank, @Size, @Email.
+            Spring automatically validates request bodies annotated with @Valid.
+            No manual if-checks needed.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!--
+            SPRING SECURITY: Authentication and authorization framework.
+            WARNING: Adding this dependency immediately locks down ALL endpoints.
+            We'll configure it to allow public access to auth routes.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!--
+            POSTGRESQL DRIVER: The JDBC driver that connects Java to PostgreSQL.
+            scope=runtime means it's needed when the app runs, but your code
+            never directly imports classes from this library.
+        -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            FLYWAY: Database migration tool.
+            Instead of manually running CREATE TABLE statements, you write
+            numbered SQL files. Flyway runs them in order on app startup
+            and tracks what's been applied. This is version control for your schema.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!--
+            JWT LIBRARIES: For creating and validating JSON Web Tokens.
+            3 modules: api (interfaces you code against), impl (implementation),
+            jackson (JSON parsing support). This separation is a common Java pattern.
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            SWAGGER / OPENAPI: Auto-generates interactive API documentation
+            from your controller annotations. Visit /swagger-ui.html when running.
+            Reviewers love seeing documented APIs.
+        -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+
+        <!--
+            TEST DEPENDENCIES (scope=test means only available during testing)
+        -->
+
+        <!-- JUnit 5, MockMvc, Mockito, AssertJ - everything for testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Utilities for testing secured endpoints (@WithMockUser etc.) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- H2: In-memory database for tests. Fast, no Docker needed. -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Spring Boot Maven Plugin: Packages your app as an executable JAR
+                with embedded Tomcat. Run with: java -jar target/task-manager-api-0.0.1-SNAPSHOT.jar
+            -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
