@@ -1,19 +1,24 @@
-# Docker Compose for local development
-# Start:  docker-compose up -d
-# Stop:   docker-compose down
-# Reset:  docker-compose down -v  (deletes all data)
-
-version: "3.8"
+# Local development environment.
+#
+# Usage:
+#   docker-compose up -d        Start in the background
+#   docker-compose down         Stop and remove containers
+#   docker-compose down -v      Stop and remove containers + volumes (destroys all data)
+#
+# Credentials below are for local development only.
+# Override via a .env file (already listed in .gitignore) — never commit real secrets.
 
 services:
   postgres:
     image: postgres:16-alpine
     container_name: taskmanager-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: taskmanager
       POSTGRES_USER: taskmanager
       POSTGRES_PASSWORD: taskmanager123
     ports:
+      # Host port 5433 avoids conflicts with any locally installed PostgreSQL instance on 5432.
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
